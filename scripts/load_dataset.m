@@ -1,7 +1,8 @@
 function [images, labels] = load_dataset()
 % ucitavanje slika
 
-datasetPath = fullfile('..', 'Finger Vein Database');
+datasetPath = fullfile(pwd, 'Finger Vein Database');
+
 folders = dir(datasetPath);
 folders = folders([folders.isdir]); % 
 folders = folders(~ismember({folders.name}, {'.','..'}));

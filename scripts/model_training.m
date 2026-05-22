@@ -1,7 +1,14 @@
 function trainedModel = model_training(images, labels)
 
 numberOfImages = length(images);
-featureMatrix = zeros(numberOfImages, 64*64); 
+
+% odredi duljinu featurea iz prve slike
+originalImage = images{1};
+preprocessedImage = image_preprocess(originalImage);
+firstFeature = feature_extract(preprocessedImage);
+featureLen = length(firstFeature);
+
+featureMatrix = zeros(numberOfImages, featureLen); 
 
 fprintf('Zapocinjem ekstrakciju featurea za %d slika\n', numberOfImages);
 
@@ -11,9 +18,9 @@ if progressStep == 0
 end
 
 for i = 1:numberOfImages
-    originalImage = images{i};                     % uzmi originalnu sliku
-    preprocessedImage = image_preprocess(originalImage);   % predobrada
-    imageFeatures = feature_extract(preprocessedImage);    % ekstrakcija feature
+    originalImage = images{i};                     
+    preprocessedImage = image_preprocess(originalImage);   
+    imageFeatures = feature_extract(preprocessedImage);    
     featureMatrix(i, :) = imageFeatures;  
 
     if mod(i, progressStep) == 0 || i == numberOfImages
@@ -26,7 +33,6 @@ end
 fprintf('Feature extraction gotov\n');
 
 fprintf('zapocinjem treniranje modela \n');
-%fprintf('Verbose mode: on\n');
 
 trainedModel = fitcecoc(featureMatrix, labels, 'Verbose', 1);
 

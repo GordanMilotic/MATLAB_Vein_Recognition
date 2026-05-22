@@ -1,7 +1,5 @@
-function features = feature_extract(image)
-%  ekstrakcija znacajki iz predoradenih slika
-% izlaz - vektor znacajki
+function feature_vector = feature_extract(input_image)
 
-features = double(image(:))';
+feature_vector = extractHOGFeatures(input_image, 'CellSize', [8 8]);
 
 end

@@ -1,7 +1,9 @@
 clc; clear; close all;
 
+% Putanja do spremljenog modela
 modelFile = fullfile(pwd, 'trainedModel.mat');
 
+% Provjeri postoji li model
 if isfile(modelFile)
     fprintf('Pronaden spremljeni model: %s\n', modelFile);
     S = load(modelFile, 'trainedModel');
@@ -36,6 +38,7 @@ else
     fprintf('Model uspjesno spremljen\n');
 end
 
+% Ako testImages/testLabels nisu definirani, ponovno ih učitaj
 if ~exist('testImages', 'var') || ~exist('testLabels', 'var')
     [allImages, allLabels] = load_dataset();
     numTotalImages = length(allImages);
@@ -47,12 +50,6 @@ if ~exist('testImages', 'var') || ~exist('testLabels', 'var')
     testLabels = allLabels(testIndices);
 end
 
-fprintf('testiranje modela\n');
+fprintf('Testiranje modela\n');
 testAccuracy = model_testing(trainedModel, testImages, testLabels);
-fprintf('tocnost modela: %.2f %%\n\n', testAccuracy);
-
-disp("demo predikcija");
-slika = "Finger Vein Database/010/left/index_5.bmp";
-rezultat = model_predict(trainedModel, slika);
-disp("Predikcija za tu sliku je:"); %demo_main za brze pokretnjae
-disp(rezultat);
+fprintf('Tocnost modela na test skupu: %.2f %%\n', testAccuracy);

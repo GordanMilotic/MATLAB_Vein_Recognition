@@ -1,21 +1,33 @@
 clc; clear; close all;
 
-% Ucitaj spremljeni model
-load("trainedModel.mat", "trainedModel");
+modelFile = fullfile(pwd, 'trainedModel.mat');
+if ~isfile(modelFile)
+    error('Nije pronaden spremljeni model');
+end
+S = load(modelFile, 'trainedModel');
+trainedModel = S.trainedModel;
 
-disp("Demo predikcija");
+numSamples = 5;
+selectedImages = cell(numSamples,1);
 
-% Otvori file selector 
-[filename, pathname] = uigetfile('*.bmp', 'Odaberite sliku za predikciju iz datoteke');
-if isequal(filename,0)
-    disp('nije odabrana slika');
-else
-    slika = fullfile(pathname, filename);  % potpuna putanja do slike
-    try
-        rezultat = model_predict(trainedModel, slika);
-        disp("Predikcija za tu sliku je:"); %nije dobra predikcija, treba model prepravit
-        disp(rezultat);
-    catch ME
-        warning('Pogreska pri predikciji: %s', ME.message);
+for i = 1:numSamples
+    [filename, pathname] = uigetfile('*.bmp', sprintf('Odaberite sliku %d', i));
+    if isequal(filename,0)
+        error('Nije odabrana slika');
     end
+    selectedImages{i} = fullfile(pathname, filename);
+end % ovo je za sad rucni odabir slike
+
+for i = 1:numSamples
+    imgPath = selectedImages{i};
+    img = imread(imgPath);
+
+    figure(1); imshow(img); title(sprintf('Slika %d', i));
+    
+    featureVector = feature_extract(image_preprocess(img));
+    predictedLabel = predict(trainedModel, featureVector);
+    
+    fprintf('Slika %d: Predikcija = %d\n', i, predictedLabel);
+    
+    pause(1);
 end

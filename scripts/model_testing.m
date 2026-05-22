@@ -5,13 +5,20 @@ function testAccuracy = model_testing(trainedModel, testImages, testLabels)
 % izlaz- testAccuracy - tocnost modela na test skupu
 
 totalNumberOfTestImages = length(testImages);
-testFeatureMatrix = zeros(totalNumberOfTestImages, 64*64);
+
+% odredi duljinu featurea iz prve testne slike
+originalTestImage = testImages{1};
+preprocessedTestImage = image_preprocess(originalTestImage);
+firstFeature = feature_extract(preprocessedTestImage);
+featureLen = length(firstFeature);
+
+testFeatureMatrix = zeros(totalNumberOfTestImages, featureLen);
 
 for i = 1:totalNumberOfTestImages
-    originalTestImage = testImages{i};                  % uzmi testnu sliku
-    preprocessedTestImage = image_preprocess(originalTestImage); % predobrada
-    testImageFeatures = feature_extract(preprocessedTestImage);  % ekstrakcija feature-a
-    testFeatureMatrix(i, :) = testImageFeatures;        % spremi u matricu
+    originalTestImage = testImages{i};                  
+    preprocessedTestImage = image_preprocess(originalTestImage); 
+    testImageFeatures = feature_extract(preprocessedTestImage);  
+    testFeatureMatrix(i, :) = testImageFeatures;        
 end
 
 predictedLabels = predict(trainedModel, testFeatureMatrix);
